@@ -1,4 +1,4 @@
-public class Exception {
+public class Exception1 {
 
 //     public static void main(String[] args) {
 //         int a[] = new int[5];
