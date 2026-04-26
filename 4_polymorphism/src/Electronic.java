@@ -1,4 +1,4 @@
-package TokoKami;
+
 public class Electronic extends Product{
     int warranty;
 

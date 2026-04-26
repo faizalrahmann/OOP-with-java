@@ -1,4 +1,4 @@
-package TokoKami;
+
 public class Clothing extends Product{
  int size;
  String material;

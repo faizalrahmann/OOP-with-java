@@ -1,4 +1,4 @@
-package TokoKami;
+
 public class Food extends Product {
     String expire;
 
