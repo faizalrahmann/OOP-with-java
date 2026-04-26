@@ -1,3 +1,4 @@
+package TokoKami;
 public class Product {
     String name;
     double price;

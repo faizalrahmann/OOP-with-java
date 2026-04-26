@@ -1,3 +1,4 @@
+package TokoKami;
 import java.util.Scanner;
 
 public class tokoKami {
