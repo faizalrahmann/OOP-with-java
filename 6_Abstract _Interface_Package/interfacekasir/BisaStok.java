@@ -5,3 +5,4 @@ public interface BisaStok {
     boolean cekStok();
     void kurangiStok();
 }
+

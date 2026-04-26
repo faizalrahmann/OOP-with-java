@@ -31,3 +31,4 @@ package model;
         System.out.println("Stok: " + stok);
      }
  }
+ 
