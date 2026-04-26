@@ -1,4 +1,4 @@
-package bisaStok;
+package interfacekasir;
 
 public interface BisaStok {
     int STOK_MINIMAL = 5;

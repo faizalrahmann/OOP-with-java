@@ -1,12 +1,12 @@
 package model;
 
- import interfacekasir.BisaDiskon;
- import interfacekasir.BisaStok;
+import interfacekasir.BisaDiskon;
+import interfacekasir.BisaStok;
 
- public class Minuman extends Produk implements BisaDiskon, BisaStok {
+public class Minuman extends Produk implements BisaDiskon, BisaStok {
 
     @Override
-    public void hitungDiskon() {
+    public int hitungDiskon() {
         return (harga * qty) * PERSEN_DISKON / 100;
     }
 
@@ -21,14 +21,14 @@ package model;
     }
 
     @Override
-     public void kurangiStok(){
+    public void kurangiStok() {
         stok -= qty;
-     }
+    }
 
     @Override
-     public void tampil () {
+    public void tampil() {
         super.tampil();
         System.out.println("Stok: " + stok);
-     }
- }
+    }
+}
  

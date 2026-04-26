@@ -6,19 +6,19 @@ public class KasirApp {
     public static void main(String[] args) {
         System.out.println("=== SISTEM KASIR ===");
 
-        Makanan makanana = new Makanan();
-        makanana.nama = "Nasi Goreng";
-        makanann.harga = 20000;
+        Makanan makanan = new Makanan();
+        makanan.nama = "Nasi Goreng";
+        makanan.harga = 20000;
         makanan.qty = 2;
 
-        Minuman minuman = new Minuman ();
+        Minuman minuman = new Minuman();
         minuman.nama = "Teh Botol";
         minuman.harga = 5000;
         minuman.qty = 10;
         int totalMinuman = 0;
 
         System.out.println("\n=== Item1 ===");
-        makanan.tapil();
+        makanan.tampil();
         System.out.println("Diskon: " + makanan.hitungDiskon());
         int totalMakanan = makanan.hitungTotal();
 
