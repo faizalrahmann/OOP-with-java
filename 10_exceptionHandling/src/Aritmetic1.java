@@ -5,5 +5,9 @@ public class Aritmetic1 {
         int hasil = 10 /0;
 
         System.out.println(hasil);
-    } 
+
+    } catch (ArithmeticException e) {
+        System.out.println("tidak bisa dibagi nol");
+    }
+    
 }
