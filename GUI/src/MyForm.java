@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 
 import java.awt.Color;
 
-public class MyForm {
+public class MyForm implements java.awt.event.ActionListener {
 
     JTextField txtNama, txtNIM;
     JButton btnSubmit, btnCancel;
@@ -35,8 +35,8 @@ public class MyForm {
         panel.add(txtNIM);
         panel.add(btnSubmit);
         panel.add(btnCancel);
-        btnSubmit.addActionListener((this::null);)
-        btnCancel.addActionListener(this::null);
+        btnSubmit.addActionListener(this::actionPerformed);
+        btnCancel.addActionListener(this::actionPerformed);
        
 
         frame.add(panel);
