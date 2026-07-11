@@ -16,14 +16,17 @@ public class BiodataMahasiswa extends JFrame {
         // Set up frame properties
         setTitle("Aplikasi Biodata Mahasiswa");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(600, 450);
+        setSize(600, 550);
         setLocationRelativeTo(null);
         setResizable(false);
 
         // Create main panel
         JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout());
+        mainPanel.setLayout(new GridBagLayout());
         mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(0, 0, 10, 0);
 
         // Create input panel
         JPanel inputPanel = new JPanel();
@@ -84,9 +87,22 @@ public class BiodataMahasiswa extends JFrame {
         outputPanel.add(scrollPane, BorderLayout.CENTER);
 
         // Add panels to main panel
-        mainPanel.add(inputPanel, BorderLayout.NORTH);
-        mainPanel.add(buttonPanel, BorderLayout.CENTER);
-        mainPanel.add(outputPanel, BorderLayout.SOUTH);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        gbc.weighty = 0;
+        mainPanel.add(inputPanel, gbc);
+
+        gbc.gridy = 1;
+        gbc.insets = new Insets(5, 0, 10, 0);
+        mainPanel.add(buttonPanel, gbc);
+
+        gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weighty = 1.0;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        mainPanel.add(outputPanel, gbc);
 
         // Add main panel to frame
         add(mainPanel);
