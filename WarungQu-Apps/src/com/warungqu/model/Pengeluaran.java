@@ -6,8 +6,8 @@ public class Pengeluaran extends Transaksi {
     public Pengeluaran() {
     }
 
-    public Pengeluaran(int idTransaksi, String tanggal, double total, String keteranganOperasional) {
-        super(idTransaksi, tanggal, total);
+    public Pengeluaran(int idTransaksi, String tipe, String tanggal, double total, String keteranganOperasional) {
+        super(idTransaksi, tipe, tanggal, total);
         this.keteranganOperasional = keteranganOperasional;
     }
 

@@ -7,8 +7,8 @@ public class Pemasukan extends Transaksi {
     public Pemasukan() {
     }
 
-    public Pemasukan(int idTransaksi, String tanggal, double total, double uangBayar, double uangKembalian) {
-        super(idTransaksi, tanggal, total);
+    public Pemasukan(int idTransaksi, String tipe, String tanggal, double total, double uangBayar, double uangKembalian) {
+        super(idTransaksi, tipe, tanggal, total);
         this.uangBayar = uangBayar;
         this.uangKembalian = uangKembalian;
     }
