@@ -17,6 +17,9 @@ public class RiwayatPanel extends JPanel {
     private final JComboBox<String> filterCombo;
     private final JTextArea detailArea;
     private final JLabel detailTitleLabel;
+    private final JLabel pemasukanHariIniLabel;
+    private final JLabel pengeluaranHariIniLabel;
+    private final JLabel saldoHariIniLabel;
 
     public RiwayatPanel() {
         this.transaksiDAO = new TransaksiDAO();
@@ -37,6 +40,23 @@ public class RiwayatPanel extends JPanel {
         JButton refreshButton = new JButton("Refresh");
         topPanel.add(refreshButton);
         add(topPanel, BorderLayout.PAGE_START);
+
+        JPanel summaryPanel = new JPanel(new GridLayout(1, 3, 12, 12));
+        summaryPanel.setBackground(new Color(245, 245, 245));
+        summaryPanel.setBorder(BorderFactory.createEmptyBorder(8, 0, 8, 0));
+        pemasukanHariIniLabel = new JLabel("Pemasukan Hari Ini: Rp 0");
+        pemasukanHariIniLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        pemasukanHariIniLabel.setForeground(new Color(46, 125, 50));
+        pengeluaranHariIniLabel = new JLabel("Pengeluaran Hari Ini: Rp 0");
+        pengeluaranHariIniLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        pengeluaranHariIniLabel.setForeground(new Color(198, 40, 40));
+        saldoHariIniLabel = new JLabel("Saldo Hari Ini: Rp 0");
+        saldoHariIniLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        saldoHariIniLabel.setForeground(new Color(21, 101, 192));
+        summaryPanel.add(pemasukanHariIniLabel);
+        summaryPanel.add(pengeluaranHariIniLabel);
+        summaryPanel.add(saldoHariIniLabel);
+        add(summaryPanel, BorderLayout.AFTER_LAST_LINE);
 
         String[] columns = {"ID", "Tanggal", "Tipe", "Total", "Bayar", "Kembalian", "Keterangan"};
         tableModel = new DefaultTableModel(columns, 0) {
@@ -99,6 +119,7 @@ public class RiwayatPanel extends JPanel {
         }
         detailArea.setText("Pilih transaksi untuk melihat detail.");
         detailTitleLabel.setText("Detail Transaksi");
+        updateDailySummary();
     }
 
     private void showDetail() {
@@ -145,7 +166,17 @@ public class RiwayatPanel extends JPanel {
         detailArea.setText(builder.toString());
     }
 
+    private void updateDailySummary() {
+        double pemasukan = transaksiDAO.getTodayPemasukan();
+        double pengeluaran = transaksiDAO.getTodayPengeluaran();
+        double saldo = pemasukan - pengeluaran;
+        pemasukanHariIniLabel.setText("Pemasukan Hari Ini: " + FormatUtil.formatRupiah(pemasukan));
+        pengeluaranHariIniLabel.setText("Pengeluaran Hari Ini: " + FormatUtil.formatRupiah(pengeluaran));
+        saldoHariIniLabel.setText("Saldo Hari Ini: " + FormatUtil.formatRupiah(saldo));
+    }
+
     public void refreshRiwayat() {
         loadRiwayat();
+        updateDailySummary();
     }
 }
