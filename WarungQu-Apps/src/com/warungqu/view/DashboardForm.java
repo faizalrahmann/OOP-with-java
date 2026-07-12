@@ -1,7 +1,11 @@
 package com.warungqu.view;
 
+import com.warungqu.dao.TransaksiDAO;
+import com.warungqu.util.FormatUtil;
+
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public class DashboardForm extends JFrame {
     private final Color bg = new Color(245, 245, 245);
@@ -30,6 +34,12 @@ public class DashboardForm extends JFrame {
     }
 
     private JPanel createDashboardPanel() {
+        TransaksiDAO transaksiDAO = new TransaksiDAO();
+        double pemasukan = transaksiDAO.getTodayPemasukan();
+        double pengeluaran = transaksiDAO.getTodayPengeluaran();
+        double saldo = transaksiDAO.getTodaySaldoBersih();
+        List<String> activities = transaksiDAO.getRecentActivity(5);
+
         JPanel root = new JPanel(new BorderLayout());
         root.setBackground(bg);
         root.setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
@@ -46,17 +56,17 @@ public class DashboardForm extends JFrame {
         JPanel cardsPanel = new JPanel(new GridLayout(1, 3, 12, 0));
         cardsPanel.setBackground(bg);
 
-        cardsPanel.add(createSummaryCard("Pemasukan Hari Ini", "Rp 0", primaryGreen));
-        cardsPanel.add(createSummaryCard("Pengeluaran Hari Ini", "Rp 0", dangerRed));
-        cardsPanel.add(createSummaryCard("Saldo Bersih", "Rp 0", accentBlue));
+        cardsPanel.add(createSummaryCard("Pemasukan Hari Ini", FormatUtil.formatRupiah(pemasukan), primaryGreen));
+        cardsPanel.add(createSummaryCard("Pengeluaran Hari Ini", FormatUtil.formatRupiah(pengeluaran), dangerRed));
+        cardsPanel.add(createSummaryCard("Saldo Bersih", FormatUtil.formatRupiah(saldo), accentBlue));
 
         centerPanel.add(cardsPanel, BorderLayout.NORTH);
 
         JPanel bottomPanel = new JPanel(new GridLayout(1, 2, 12, 0));
         bottomPanel.setBackground(bg);
 
-        bottomPanel.add(createActivityPanel("Recent Activity", textDark));
-        bottomPanel.add(createActivityPanel("Menu Utama", textDark));
+        bottomPanel.add(createActivityPanel("Recent Activity", activities, textDark));
+        bottomPanel.add(createActivityPanel("Menu Utama", List.of("Tab Produk", "Tab Kasir", "Tab Pengeluaran", "Tab Riwayat"), textDark));
 
         centerPanel.add(bottomPanel, BorderLayout.CENTER);
         root.add(centerPanel, BorderLayout.CENTER);
@@ -85,7 +95,7 @@ public class DashboardForm extends JFrame {
         return card;
     }
 
-    private JPanel createActivityPanel(String title, Color textColor) {
+    private JPanel createActivityPanel(String title, java.util.List<String> items, Color textColor) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
         panel.setBorder(BorderFactory.createCompoundBorder(
@@ -98,10 +108,17 @@ public class DashboardForm extends JFrame {
         titleLabel.setForeground(textColor);
         panel.add(titleLabel, BorderLayout.NORTH);
 
-        JTextArea area = new JTextArea("Belum ada data\n");
+        JTextArea area = new JTextArea();
         area.setEditable(false);
         area.setBackground(Color.WHITE);
         area.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        if (items.isEmpty()) {
+            area.setText("Belum ada aktivitas hari ini\n");
+        } else {
+            for (String item : items) {
+                area.append(item + "\n");
+            }
+        }
         panel.add(new JScrollPane(area), BorderLayout.CENTER);
         return panel;
     }

@@ -124,6 +124,7 @@ public class TransaksiDAO {
             while (rs.next()) {
                 Transaksi transaksi = new Transaksi();
                 transaksi.setIdTransaksi(rs.getInt("id"));
+                transaksi.setTipe(rs.getString("tipe"));
                 transaksi.setTanggal(rs.getString("tanggal"));
                 transaksi.setTotal(rs.getDouble("total"));
                 list.add(transaksi);
@@ -133,4 +134,54 @@ public class TransaksiDAO {
         }
         return list;
     }
+
+    public double getTodayPemasukan() {
+        String sql = "SELECT COALESCE(SUM(total), 0) AS total FROM tabel_transaksi WHERE tipe = 'Pemasukan' AND DATE(tanggal) = CURDATE()";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getDouble("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public double getTodayPengeluaran() {
+        String sql = "SELECT COALESCE(SUM(total), 0) AS total FROM tabel_transaksi WHERE tipe = 'Pengeluaran' AND DATE(tanggal) = CURDATE()";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getDouble("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public double getTodaySaldoBersih() {
+        return getTodayPemasukan() - getTodayPengeluaran();
+    }
+
+    public List<String> getRecentActivity(int limit) {
+        List<String> activity = new ArrayList<>();
+        String sql = "SELECT tipe, tanggal, total FROM tabel_transaksi ORDER BY tanggal DESC LIMIT ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, limit);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String tipe = rs.getString("tipe");
+                    String tanggal = rs.getString("tanggal");
+                    double total = rs.getDouble("total");
+                    activity.add(tipe + " - " + tanggal + " - " + total);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return activity;
+    }
 }
+

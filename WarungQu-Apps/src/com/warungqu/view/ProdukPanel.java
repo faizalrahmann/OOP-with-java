@@ -118,15 +118,21 @@ public class ProdukPanel extends JPanel {
         String nama = namaField.getText().trim();
         String hargaText = hargaField.getText().trim();
 
-        if (nama.isEmpty() || hargaText.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Nama produk dan harga wajib diisi.");
+        if (nama.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nama produk wajib diisi.");
+            return;
+        }
+
+        if (!hargaText.matches("^\\d+(\\\\.\\d+)?$")) {
+            JOptionPane.showMessageDialog(this, "Harga harus berupa angka positif tanpa tanda koma atau huruf.");
             return;
         }
 
         try {
             double harga = Double.parseDouble(hargaText);
-            if (harga < 0) {
-                throw new NumberFormatException();
+            if (harga <= 0) {
+                JOptionPane.showMessageDialog(this, "Harga harus lebih besar dari nol.");
+                return;
             }
 
             Produk produk = new Produk();
@@ -179,7 +185,7 @@ public class ProdukPanel extends JPanel {
         tableModel.setRowCount(0);
         List<Produk> list = produkDAO.getAll();
         for (Produk p : list) {
-            tableModel.addRow(new Object[]{p.getIdProduk(), p.getNamaProduk(), p.getHarga()});
+            tableModel.addRow(new Object[]{p.getIdProduk(), p.getNamaProduk(), FormatUtil.formatRupiah(p.getHarga())});
         }
     }
 }
