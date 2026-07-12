@@ -5,6 +5,7 @@ import com.warungqu.model.DetailTransaksi;
 import com.warungqu.model.Pemasukan;
 import com.warungqu.model.Pengeluaran;
 import com.warungqu.model.Transaksi;
+import com.warungqu.model.DetailTransaksiReport;
 import com.warungqu.util.FormatUtil;
 
 import java.sql.Connection;
@@ -118,22 +119,63 @@ public class TransaksiDAO {
     }
 
     public List<Transaksi> getAllTransaksi() {
+        return getAllTransaksi(null);
+    }
+
+    public List<Transaksi> getAllTransaksi(String tipeFilter) {
         List<Transaksi> list = new ArrayList<>();
-        String sql = "SELECT * FROM tabel_transaksi ORDER BY id DESC";
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                Transaksi transaksi = new Transaksi();
-                transaksi.setIdTransaksi(rs.getInt("id"));
-                transaksi.setTipe(rs.getString("tipe"));
-                transaksi.setTanggal(rs.getString("tanggal"));
-                transaksi.setTotal(rs.getDouble("total"));
-                list.add(transaksi);
+        String sql = "SELECT t.id, t.tipe, t.tanggal, t.total, t.bayar, t.kembalian, p.keterangan " +
+                "FROM tabel_transaksi t " +
+                "LEFT JOIN tabel_pengeluaran p ON t.id = p.id_transaksi ";
+        if (tipeFilter != null && !tipeFilter.isBlank() && !"Semua".equalsIgnoreCase(tipeFilter)) {
+            sql += "WHERE t.tipe = ? ";
+        }
+        sql += "ORDER BY t.id DESC";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            if (tipeFilter != null && !tipeFilter.isBlank() && !"Semua".equalsIgnoreCase(tipeFilter)) {
+                ps.setString(1, tipeFilter);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Transaksi transaksi = new Transaksi();
+                    transaksi.setIdTransaksi(rs.getInt("id"));
+                    transaksi.setTipe(rs.getString("tipe"));
+                    transaksi.setTanggal(rs.getString("tanggal"));
+                    transaksi.setTotal(rs.getDouble("total"));
+                    transaksi.setBayar(rs.getDouble("bayar"));
+                    transaksi.setKembalian(rs.getDouble("kembalian"));
+                    transaksi.setKeterangan(rs.getString("keterangan"));
+                    list.add(transaksi);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return list;
+    }
+
+    public List<DetailTransaksiReport> getDetailTransaksi(int idTransaksi) {
+        List<DetailTransaksiReport> detailList = new ArrayList<>();
+        String sql = "SELECT p.nama_produk, dt.jumlah, dt.subtotal " +
+                "FROM tabel_detail_transaksi dt " +
+                "LEFT JOIN tabel_produk p ON dt.id_produk = p.id " +
+                "WHERE dt.id_transaksi = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, idTransaksi);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    DetailTransaksiReport detail = new DetailTransaksiReport();
+                    detail.setNamaProduk(rs.getString("nama_produk"));
+                    detail.setJumlah(rs.getInt("jumlah"));
+                    detail.setSubtotal(rs.getDouble("subtotal"));
+                    detailList.add(detail);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return detailList;
     }
 
     public double getTodayPemasukan() {
