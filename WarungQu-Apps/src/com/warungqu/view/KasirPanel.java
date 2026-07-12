@@ -5,8 +5,10 @@ import com.warungqu.dao.TransaksiDAO;
 import com.warungqu.model.DetailTransaksi;
 import com.warungqu.model.Pemasukan;
 import com.warungqu.model.Produk;
+import com.warungqu.util.FormatUtil;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
@@ -80,6 +82,16 @@ public class KasirPanel extends JPanel {
             }
         };
         keranjangTable = new JTable(keranjangModel);
+        keranjangTable.getColumnModel().getColumn(2).setCellRenderer(new DefaultTableCellRenderer() {
+            @Override
+            protected void setValue(Object value) {
+                if (value instanceof Number) {
+                    setText(FormatUtil.formatRupiah(((Number) value).doubleValue()));
+                } else {
+                    super.setValue(value);
+                }
+            }
+        });
         centerPanel.add(new JScrollPane(keranjangTable), BorderLayout.CENTER);
 
         JPanel summaryPanel = new JPanel(new GridLayout(4, 2, 8, 8));
@@ -131,6 +143,10 @@ public class KasirPanel extends JPanel {
         }
     }
 
+    public void refreshProdukList() {
+        loadProduk();
+    }
+
     private void tambahKeKeranjang() {
         Produk produk = (Produk) produkComboBox.getSelectedItem();
         if (produk == null) {
@@ -143,7 +159,7 @@ public class KasirPanel extends JPanel {
         grandTotal += subtotal;
 
         keranjangModel.addRow(new Object[]{produk.getNamaProduk(), jumlah, subtotal});
-        grandTotalLabel.setText("Rp " + String.format("%,.0f", grandTotal));
+        grandTotalLabel.setText(FormatUtil.formatRupiah(grandTotal));
         hitungKembalian();
     }
 
@@ -154,7 +170,16 @@ public class KasirPanel extends JPanel {
         }
 
         try {
-            double bayar = Double.parseDouble(uangBayarField.getText().trim());
+            String bayarText = uangBayarField.getText().trim();
+            if (bayarText.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Masukkan jumlah uang bayar.");
+                return;
+            }
+            double bayar = Double.parseDouble(bayarText);
+            if (bayar < 0) {
+                JOptionPane.showMessageDialog(this, "Uang bayar tidak boleh negatif.");
+                return;
+            }
             if (bayar < grandTotal) {
                 JOptionPane.showMessageDialog(this, "Uang bayar kurang dari total belanja.");
                 return;
@@ -187,9 +212,9 @@ public class KasirPanel extends JPanel {
                 JOptionPane.showMessageDialog(this, "Transaksi berhasil disimpan.");
                 keranjangModel.setRowCount(0);
                 grandTotal = 0;
-                grandTotalLabel.setText("Rp 0");
+                grandTotalLabel.setText(FormatUtil.formatRupiah(0));
                 uangBayarField.setText("");
-                kembalianLabel.setText("Rp 0");
+                kembalianLabel.setText(FormatUtil.formatRupiah(0));
             } else {
                 JOptionPane.showMessageDialog(this, "Gagal menyimpan transaksi.");
             }
@@ -212,7 +237,7 @@ public class KasirPanel extends JPanel {
         try {
             double bayar = Double.parseDouble(uangBayarField.getText().trim());
             double kembalian = bayar - grandTotal;
-            kembalianLabel.setText("Rp " + String.format("%,.0f", Math.max(kembalian, 0)));
+            kembalianLabel.setText(FormatUtil.formatRupiah(Math.max(kembalian, 0)));
         } catch (NumberFormatException ex) {
             kembalianLabel.setText("Rp 0");
         }

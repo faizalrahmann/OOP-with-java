@@ -2,6 +2,7 @@ package com.warungqu.view;
 
 import com.warungqu.dao.TransaksiDAO;
 import com.warungqu.model.Transaksi;
+import com.warungqu.util.FormatUtil;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -44,8 +45,12 @@ public class RiwayatPanel extends JPanel {
             tableModel.addRow(new Object[]{
                     transaksi.getIdTransaksi(),
                     transaksi.getTanggal(),
-                    transaksi.getTotal()
+                    FormatUtil.formatRupiah(transaksi.getTotal())
             });
         }
+    }
+
+    public void refreshRiwayat() {
+        loadRiwayat();
     }
 }

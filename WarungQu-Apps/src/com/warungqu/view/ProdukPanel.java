@@ -5,6 +5,7 @@ import com.warungqu.model.Produk;
 import com.warungqu.util.FormatUtil;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
@@ -95,6 +96,16 @@ public class ProdukPanel extends JPanel {
             }
         };
         produkTable = new JTable(tableModel);
+        produkTable.getColumnModel().getColumn(2).setCellRenderer(new DefaultTableCellRenderer() {
+            @Override
+            protected void setValue(Object value) {
+                if (value instanceof Number) {
+                    setText(FormatUtil.formatRupiah(((Number) value).doubleValue()));
+                } else {
+                    super.setValue(value);
+                }
+            }
+        });
         JScrollPane scrollPane = new JScrollPane(produkTable);
 
         add(formPanel, BorderLayout.NORTH);
@@ -124,7 +135,7 @@ public class ProdukPanel extends JPanel {
             return;
         }
 
-        if (!hargaText.matches("^\\d+(\\\\.\\d+)?$")) {
+        if (!hargaText.matches("^\\d+(\\.\\d+)?$")) {
             JOptionPane.showMessageDialog(this, "Harga harus berupa angka positif tanpa tanda koma atau huruf.");
             return;
         }
@@ -186,7 +197,7 @@ public class ProdukPanel extends JPanel {
         tableModel.setRowCount(0);
         List<Produk> list = produkDAO.getAll();
         for (Produk p : list) {
-            tableModel.addRow(new Object[]{p.getIdProduk(), p.getNamaProduk(), FormatUtil.formatRupiah(p.getHarga())});
+            tableModel.addRow(new Object[]{p.getIdProduk(), p.getNamaProduk(), p.getHarga()});
         }
     }
 }

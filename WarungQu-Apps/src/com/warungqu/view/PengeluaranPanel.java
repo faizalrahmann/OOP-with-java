@@ -67,9 +67,19 @@ public class PengeluaranPanel extends JPanel {
 
     private void simpanPengeluaran() {
         try {
-            double nominal = Double.parseDouble(nominalField.getText().trim());
-            String keterangan = keteranganArea.getText().trim();
+            String nominalText = nominalField.getText().trim();
+            if (nominalText.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Nominal pengeluaran wajib diisi.");
+                return;
+            }
 
+            double nominal = Double.parseDouble(nominalText);
+            if (nominal <= 0) {
+                JOptionPane.showMessageDialog(this, "Nominal harus lebih besar dari nol.");
+                return;
+            }
+
+            String keterangan = keteranganArea.getText().trim();
             if (keterangan.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Keterangan pengeluaran wajib diisi.");
                 return;

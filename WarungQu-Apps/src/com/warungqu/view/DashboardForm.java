@@ -13,6 +13,12 @@ public class DashboardForm extends JFrame {
     private final Color dangerRed = new Color(198, 40, 40);
     private final Color accentBlue = new Color(21, 101, 192);
     private final Color textDark = new Color(33, 33, 33);
+    private final JTabbedPane tabbedPane;
+    private final JPanel dashboardPanel;
+    private final ProdukPanel produkPanel;
+    private final KasirPanel kasirPanel;
+    private final PengeluaranPanel pengeluaranPanel;
+    private final RiwayatPanel riwayatPanel;
 
     public DashboardForm() {
         setTitle("WarungQU - Dashboard");
@@ -20,15 +26,32 @@ public class DashboardForm extends JFrame {
         setSize(1200, 760);
         setLocationRelativeTo(null);
 
-        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane = new JTabbedPane();
         tabbedPane.setBackground(bg);
         tabbedPane.setForeground(textDark);
 
-        tabbedPane.addTab("Dashboard", createDashboardPanel());
-        tabbedPane.addTab("Produk", new ProdukPanel());
-        tabbedPane.addTab("Kasir", new KasirPanel());
-        tabbedPane.addTab("Pengeluaran", new PengeluaranPanel());
-        tabbedPane.addTab("Riwayat", new RiwayatPanel());
+        produkPanel = new ProdukPanel();
+        kasirPanel = new KasirPanel();
+        pengeluaranPanel = new PengeluaranPanel();
+        riwayatPanel = new RiwayatPanel();
+
+        dashboardPanel = new JPanel(new BorderLayout());
+        dashboardPanel.add(createDashboardPanel(), BorderLayout.CENTER);
+        tabbedPane.addTab("Dashboard", dashboardPanel);
+        tabbedPane.addTab("Produk", produkPanel);
+        tabbedPane.addTab("Kasir", kasirPanel);
+        tabbedPane.addTab("Pengeluaran", pengeluaranPanel);
+        tabbedPane.addTab("Riwayat", riwayatPanel);
+
+        tabbedPane.addChangeListener(e -> {
+            if (tabbedPane.getSelectedComponent() == dashboardPanel) {
+                refreshDashboardPanel();
+            } else if (tabbedPane.getSelectedComponent() == kasirPanel) {
+                kasirPanel.refreshProdukList();
+            } else if (tabbedPane.getSelectedComponent() == riwayatPanel) {
+                riwayatPanel.refreshRiwayat();
+            }
+        });
 
         setContentPane(tabbedPane);
     }
@@ -71,6 +94,13 @@ public class DashboardForm extends JFrame {
         centerPanel.add(bottomPanel, BorderLayout.CENTER);
         root.add(centerPanel, BorderLayout.CENTER);
         return root;
+    }
+
+    private void refreshDashboardPanel() {
+        dashboardPanel.removeAll();
+        dashboardPanel.add(createDashboardPanel(), BorderLayout.CENTER);
+        dashboardPanel.revalidate();
+        dashboardPanel.repaint();
     }
 
     private JPanel createSummaryCard(String title, String value, Color color) {
