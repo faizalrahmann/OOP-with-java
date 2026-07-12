@@ -65,7 +65,7 @@ public class DashboardForm extends JFrame {
         JPanel bottomPanel = new JPanel(new GridLayout(1, 2, 12, 0));
         bottomPanel.setBackground(bg);
 
-        bottomPanel.add(createActivityPanel("Recent Activity", activities, textDark));
+        bottomPanel.add(createActivityPanel("Aktifitas Terbaru", activities, textDark));
         bottomPanel.add(createActivityPanel("Menu Utama", List.of("Tab Produk", "Tab Kasir", "Tab Pengeluaran", "Tab Riwayat"), textDark));
 
         centerPanel.add(bottomPanel, BorderLayout.CENTER);

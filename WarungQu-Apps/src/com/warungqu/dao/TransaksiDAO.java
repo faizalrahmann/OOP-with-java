@@ -5,6 +5,7 @@ import com.warungqu.model.DetailTransaksi;
 import com.warungqu.model.Pemasukan;
 import com.warungqu.model.Pengeluaran;
 import com.warungqu.model.Transaksi;
+import com.warungqu.util.FormatUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -175,7 +176,7 @@ public class TransaksiDAO {
                     String tipe = rs.getString("tipe");
                     String tanggal = rs.getString("tanggal");
                     double total = rs.getDouble("total");
-                    activity.add(tipe + " - " + tanggal + " - " + total);
+                    activity.add(tipe + " - " + tanggal + " - " + FormatUtil.formatRupiah(total));
                 }
             }
         } catch (SQLException e) {
