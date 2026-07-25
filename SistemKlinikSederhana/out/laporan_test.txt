@@ -1,0 +1,4 @@
+Laporan Klinik
+Pasien: 1
+Dokter: 3
+Janji Temu: 0

@@ -6,6 +6,9 @@ import model.Patient;
 import model.User;
 import repository.ClinicRepository;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +32,14 @@ public class ClinicService {
     }
 
     public void savePatient(Patient patient) throws SQLException {
-        if (patient.getFullName().isEmpty()) {
+        if (patient == null) {
+            throw new IllegalArgumentException("Data pasien tidak boleh kosong");
+        }
+        if (patient.getFullName() == null || patient.getFullName().trim().isEmpty()) {
             throw new IllegalArgumentException("Nama pasien wajib diisi");
+        }
+        if (patient.getPhone() == null || patient.getPhone().trim().isEmpty()) {
+            throw new IllegalArgumentException("Nomor telepon wajib diisi");
         }
         repository.savePatient(patient);
     }
@@ -51,8 +60,14 @@ public class ClinicService {
     }
 
     public void saveDoctor(Doctor doctor) throws SQLException {
-        if (doctor.getFullName().isEmpty()) {
+        if (doctor == null) {
+            throw new IllegalArgumentException("Data dokter tidak boleh kosong");
+        }
+        if (doctor.getFullName() == null || doctor.getFullName().trim().isEmpty()) {
             throw new IllegalArgumentException("Nama dokter wajib diisi");
+        }
+        if (doctor.getSpecialty() == null || doctor.getSpecialty().trim().isEmpty()) {
+            throw new IllegalArgumentException("Spesialis wajib diisi");
         }
         repository.saveDoctor(doctor);
     }
@@ -62,8 +77,14 @@ public class ClinicService {
     }
 
     public void saveAppointment(Appointment appointment) throws SQLException {
+        if (appointment == null) {
+            throw new IllegalArgumentException("Data janji temu tidak boleh kosong");
+        }
         if (appointment.getPatientId() <= 0 || appointment.getDoctorId() <= 0) {
             throw new IllegalArgumentException("Pasien dan dokter harus dipilih");
+        }
+        if (appointment.getAppointmentDate() == null || appointment.getAppointmentDate().trim().isEmpty()) {
+            throw new IllegalArgumentException("Tanggal janji temu wajib diisi");
         }
         repository.saveAppointment(appointment);
     }
@@ -84,5 +105,21 @@ public class ClinicService {
         List<Doctor> doctors = getAllDoctors();
         List<Appointment> appointments = getAllAppointments();
         return "Laporan Klinik\nPasien: " + patients.size() + "\nDokter: " + doctors.size() + "\nJanji Temu: " + appointments.size();
+    }
+
+    public Path exportReportToFile(String fileName) throws SQLException, IOException {
+        String report = buildReport();
+        Path path = Path.of(fileName);
+        Files.createDirectories(path.getParent());
+        Files.writeString(path, report);
+        return path;
+    }
+
+    public List<String> getPatientSummaryList() throws SQLException {
+        List<String> summaries = new ArrayList<>();
+        for (Patient patient : getAllPatients()) {
+            summaries.add(patient.getId() + " | " + patient.getFullName().toUpperCase() + " | " + patient.getPhone());
+        }
+        return summaries;
     }
 }
