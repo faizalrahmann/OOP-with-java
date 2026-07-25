@@ -59,6 +59,22 @@ public class ClinicService {
         repository.deletePatient(id);
     }
 
+    public void deleteDoctor(int id) throws SQLException {
+        String sql = "DELETE FROM doctors WHERE id=?";
+        try (java.sql.Connection conn = database.DatabaseConnection.getConnection(); java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+        }
+    }
+
+    public void deleteAppointment(int id) throws SQLException {
+        String sql = "DELETE FROM appointments WHERE id=?";
+        try (java.sql.Connection conn = database.DatabaseConnection.getConnection(); java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+        }
+    }
+
     public void saveDoctor(Doctor doctor) throws SQLException {
         if (doctor == null) {
             throw new IllegalArgumentException("Data dokter tidak boleh kosong");

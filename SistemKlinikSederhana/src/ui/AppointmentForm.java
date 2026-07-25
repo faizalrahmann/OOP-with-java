@@ -4,14 +4,15 @@ import model.Appointment;
 import service.ClinicService;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.SQLException;
 import java.util.List;
 
 public class AppointmentForm extends JDialog {
     private final ClinicService clinicService = new ClinicService();
-    private final DefaultListModel<String> listModel = new DefaultListModel<>();
-    private final JList<String> appointmentList = new JList<>(listModel);
+    private final DefaultTableModel tableModel = new DefaultTableModel(new Object[]{"ID", "ID Pasien", "ID Dokter", "Tanggal", "Status", "Catatan"}, 0);
+    private final JTable appointmentTable = new JTable(tableModel);
     private final JTextField txtPatientId = new JTextField();
     private final JTextField txtDoctorId = new JTextField();
     private final JTextField txtDate = new JTextField();
@@ -41,12 +42,14 @@ public class AppointmentForm extends JDialog {
         JPanel buttonPanel = new JPanel();
         JButton btnSave = new JButton("Simpan");
         JButton btnRefresh = new JButton("Refresh");
+        JButton btnDelete = new JButton("Hapus");
         buttonPanel.add(btnSave);
         buttonPanel.add(btnRefresh);
+        buttonPanel.add(btnDelete);
 
         JPanel right = new JPanel(new BorderLayout());
         right.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 10));
-        right.add(new JScrollPane(appointmentList), BorderLayout.CENTER);
+        right.add(new JScrollPane(appointmentTable), BorderLayout.CENTER);
 
         add(formPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
@@ -54,6 +57,17 @@ public class AppointmentForm extends JDialog {
 
         btnSave.addActionListener(e -> saveAppointment());
         btnRefresh.addActionListener(e -> loadAppointments());
+        btnDelete.addActionListener(e -> deleteAppointment());
+        appointmentTable.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting() && appointmentTable.getSelectedRow() >= 0) {
+                selectedId = Integer.parseInt(appointmentTable.getValueAt(appointmentTable.getSelectedRow(), 0).toString());
+                txtPatientId.setText(appointmentTable.getValueAt(appointmentTable.getSelectedRow(), 1).toString());
+                txtDoctorId.setText(appointmentTable.getValueAt(appointmentTable.getSelectedRow(), 2).toString());
+                txtDate.setText(appointmentTable.getValueAt(appointmentTable.getSelectedRow(), 3).toString());
+                txtStatus.setText(appointmentTable.getValueAt(appointmentTable.getSelectedRow(), 4).toString());
+                txtNotes.setText(appointmentTable.getValueAt(appointmentTable.getSelectedRow(), 5).toString());
+            }
+        });
 
         loadAppointments();
     }
@@ -73,12 +87,25 @@ public class AppointmentForm extends JDialog {
     private void loadAppointments() {
         try {
             List<Appointment> appointments = clinicService.getAllAppointments();
-            listModel.clear();
+            tableModel.setRowCount(0);
             for (Appointment appointment : appointments) {
-                listModel.addElement(appointment.getId() + " | " + appointment.getPatientId() + " | " + appointment.getDoctorId() + " | " + appointment.getStatus());
+                tableModel.addRow(new Object[]{appointment.getId(), appointment.getPatientId(), appointment.getDoctorId(), appointment.getAppointmentDate(), appointment.getStatus(), appointment.getNotes()});
             }
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
+    }
+
+    private void deleteAppointment() {
+        try {
+            if (selectedId > 0) {
+                clinicService.deleteAppointment(selectedId);
+                JOptionPane.showMessageDialog(this, "Janji temu dihapus");
+                loadAppointments();
+                clearForm();
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Kesalahan", JOptionPane.ERROR_MESSAGE);
         }
     }
 
