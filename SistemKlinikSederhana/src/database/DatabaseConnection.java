@@ -7,7 +7,7 @@ import java.sql.Statement;
 
 public class DatabaseConnection {
     private static final String BASE_URL = "jdbc:mysql://localhost:3306/";
-    private static final String DATABASE_NAME = "klinik_sederhana";
+    private static final String DATABASE_NAME = "db_klinik";
     private static final String USER = "root";
     private static final String PASSWORD = "";
 
@@ -17,7 +17,8 @@ public class DatabaseConnection {
         } catch (ClassNotFoundException e) {
             throw new SQLException("MySQL JDBC Driver tidak ditemukan", e);
         }
-        return DriverManager.getConnection(BASE_URL + DATABASE_NAME, USER, PASSWORD);
+        String url = BASE_URL + DATABASE_NAME + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+        return DriverManager.getConnection(url, USER, PASSWORD);
     }
 
     public static void initializeDatabase() {
