@@ -32,19 +32,20 @@ public class DatabaseConnection {
             }
 
             try (Connection conn = DriverManager.getConnection(BASE_URL, USER, PASSWORD); Statement stmt = conn.createStatement()) {
-            stmt.execute("CREATE DATABASE IF NOT EXISTS " + DATABASE_NAME);
-            stmt.execute("USE " + DATABASE_NAME);
-            String[] sqlStatements = {
-                "CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, full_name VARCHAR(100), username VARCHAR(50) UNIQUE, password VARCHAR(100), role VARCHAR(20), phone VARCHAR(20), address VARCHAR(255)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
-                "CREATE TABLE IF NOT EXISTS patients (id INT AUTO_INCREMENT PRIMARY KEY, full_name VARCHAR(100), phone VARCHAR(20), address VARCHAR(255), birth_date VARCHAR(20), gender VARCHAR(20), medical_history TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
-                "CREATE TABLE IF NOT EXISTS doctors (id INT AUTO_INCREMENT PRIMARY KEY, full_name VARCHAR(100), phone VARCHAR(20), address VARCHAR(255), specialty VARCHAR(100)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
-                "CREATE TABLE IF NOT EXISTS appointments (id INT AUTO_INCREMENT PRIMARY KEY, patient_id INT, doctor_id INT, appointment_date VARCHAR(20), status VARCHAR(30), notes TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
-                "INSERT IGNORE INTO users (full_name, username, password, role, phone, address) VALUES ('Admin Klinik', 'admin', 'admin123', 'admin', '08123456789', 'Bandung')"
-            };
+                stmt.execute("DROP DATABASE IF EXISTS " + DATABASE_NAME);
+                stmt.execute("CREATE DATABASE " + DATABASE_NAME);
+                stmt.execute("USE " + DATABASE_NAME);
+                String[] sqlStatements = {
+                    "CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY, full_name VARCHAR(100), username VARCHAR(50) UNIQUE, password VARCHAR(100), role VARCHAR(20), phone VARCHAR(20), address VARCHAR(255)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
+                    "CREATE TABLE patients (id INT AUTO_INCREMENT PRIMARY KEY, full_name VARCHAR(100), phone VARCHAR(20), address VARCHAR(255), birth_date VARCHAR(20), gender VARCHAR(20), medical_history TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
+                    "CREATE TABLE doctors (id INT AUTO_INCREMENT PRIMARY KEY, full_name VARCHAR(100), phone VARCHAR(20), address VARCHAR(255), specialty VARCHAR(100)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
+                    "CREATE TABLE appointments (id INT AUTO_INCREMENT PRIMARY KEY, patient_id INT, doctor_id INT, appointment_date VARCHAR(20), status VARCHAR(30), notes TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
+                    "INSERT INTO users (full_name, username, password, role, phone, address) VALUES ('Admin Klinik', 'admin', 'admin123', 'admin', '08123456789', 'Bandung')"
+                };
 
-            for (String sql : sqlStatements) {
-                stmt.execute(sql);
-            }
+                for (String sql : sqlStatements) {
+                    stmt.execute(sql);
+                }
             }
         } catch (SQLException e) {
             System.err.println("Gagal menginisialisasi database: " + e.getMessage());
